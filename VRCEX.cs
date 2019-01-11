@@ -5,7 +5,7 @@ namespace VRCEX
 {
     public static class VRCEX
     {
-        public static readonly string APP = "VRCEX v0.08c";
+        public static readonly string APP = "VRCEX v0.08d";
 
         [STAThread]
         public static void Main()

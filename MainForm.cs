@@ -1911,7 +1911,7 @@ namespace VRCEX
             if (!string.IsNullOrEmpty(id))
             {
                 m_NextFetchFavorite = DateTime.MinValue;
-                ApiFavorite.AddFavorite(id, ApiFavorite.FavoriteType.Avatar);
+                ApiFavorite.AddFavorite(id, ApiFavorite.FavoriteType.Avatar, "avatars1");
             }
         }
 
