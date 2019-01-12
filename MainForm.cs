@@ -1555,7 +1555,7 @@ namespace VRCEX
             if (L != null)
             {
                 m_NextFetchFavorite = DateTime.MinValue;
-                ApiFavorite.AddFavorite(L.WorldId, ApiFavorite.FavoriteType.World);
+                ApiFavorite.AddFavorite(L.WorldId, ApiFavorite.FavoriteType.World, "my-worlds");
             }
         }
 
