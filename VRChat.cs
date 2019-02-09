@@ -153,17 +153,24 @@ namespace VRCEX
                 {
                     using (var response = w.Response as HttpWebResponse)
                     {
-                        HandleJson<ApiResponse>(response, MainForm.Instance.OnResponse);
+                        if (response.ContentType != null && response.ContentType.IndexOf("json", StringComparison.OrdinalIgnoreCase) != -1)
+                        {
+                            HandleJson<ApiResponse>(response, MainForm.Instance.OnResponse);
+                        }
+                        else
+                        {
+                            MainForm.Instance.ShowMessage(endpoint + ": " + w.Message);
+                        }
                     }
                 }
                 catch (Exception x)
                 {
-                    MainForm.Instance.ShowMessage(endpoint + ":" + x.Message);
+                    MainForm.Instance.ShowMessage(endpoint + ": " + x.Message);
                 }
             }
             catch (Exception x)
             {
-                MainForm.Instance.ShowMessage(endpoint + ":" + x.Message);
+                MainForm.Instance.ShowMessage(endpoint + ": " + x.Message);
             }
         }
 
@@ -202,6 +209,10 @@ namespace VRCEX
                         }
                     }
                 }
+            }
+            catch (WebException w)
+            {
+                MainForm.Instance.ShowMessage(w.Message);
             }
             catch (Exception x)
             {

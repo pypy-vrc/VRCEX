@@ -337,12 +337,12 @@ namespace VRCEX
                 if (DateTime.Now.CompareTo(m_NextFetchVisits) >= 0)
                 {
                     VRCApi.FetchVisits();
-                    m_NextFetchVisits = DateTime.Now.AddSeconds(60);
+                    m_NextFetchVisits = DateTime.Now.AddSeconds(300);
                 }
                 if (DateTime.Now.CompareTo(m_NextFetchCurrentUser) >= 0)
                 {
                     ApiUser.FetchCurrentUser();
-                    m_NextFetchCurrentUser = DateTime.Now.AddSeconds(60);
+                    m_NextFetchCurrentUser = DateTime.Now.AddSeconds(120);
                 }
                 if (DateTime.Now.CompareTo(m_NextFetchModeration) >= 0)
                 {
@@ -350,17 +350,17 @@ namespace VRCEX
                     listview_moderations.Items.Clear();
                     ApiPlayerModeration.FetchAllMine();
                     ApiPlayerModeration.FetchAllAgainstMe();
-                    m_NextFetchModeration = DateTime.Now.AddSeconds(60);
+                    m_NextFetchModeration = DateTime.Now.AddSeconds(120);
                 }
                 if (DateTime.Now.CompareTo(m_NextFetchNotification) >= 0)
                 {
                     ApiNotification.FetchAll(ApiNotification.NotificationType.All, DateTime.MinValue.Equals(m_LatestNotification) ? string.Empty : m_LatestNotification.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"));
-                    m_NextFetchNotification = DateTime.Now.AddSeconds(60);
+                    m_NextFetchNotification = DateTime.Now.AddSeconds(120);
                 }
                 if (DateTime.Now.CompareTo(m_NextFetchFavorite) >= 0)
                 {
                     ApiFavorite.FetchList(ApiFavorite.FavoriteType.Friend);
-                    m_NextFetchFavorite = DateTime.Now.AddSeconds(60);
+                    m_NextFetchFavorite = DateTime.Now.AddSeconds(120);
                 }
             }
             if (DateTime.Now.CompareTo(m_NextFetchImage) >= 0)
@@ -476,7 +476,7 @@ namespace VRCEX
             }
             else
             {
-                m_NextFetchVisits = DateTime.Now.AddSeconds(60);
+                m_NextFetchVisits = DateTime.Now.AddSeconds(300);
                 label_visits.Text = $"{data} Users Online";
             }
         }
@@ -553,7 +553,7 @@ namespace VRCEX
             else
             {
                 LastLoginSuccess = true;
-                m_NextFetchCurrentUser = DateTime.Now.AddSeconds(60);
+                m_NextFetchCurrentUser = DateTime.Now.AddSeconds(120);
                 m_CurrentUser = user;
                 ApiUser.FetchFriends();
                 if (user.friends != null)
@@ -1210,7 +1210,7 @@ namespace VRCEX
             }
             else
             {
-                m_NextFetchModeration = DateTime.Now.AddSeconds(60);
+                m_NextFetchModeration = DateTime.Now.AddSeconds(120);
                 listview_moderations.BeginUpdate();
                 foreach (var moderation in moderations)
                 {
@@ -1263,7 +1263,7 @@ namespace VRCEX
             }
             else
             {
-                m_NextFetchModeration = DateTime.Now.AddSeconds(60);
+                m_NextFetchModeration = DateTime.Now.AddSeconds(120);
                 var dic = new Dictionary<string, ApiPlayerModeration>();
                 listview_moderations_againstme.BeginUpdate();
                 listview_moderations_againstme.Items.Clear();
@@ -1406,7 +1406,7 @@ namespace VRCEX
             }
             else
             {
-                m_NextFetchNotification = DateTime.Now.AddSeconds(60);
+                m_NextFetchNotification = DateTime.Now.AddSeconds(120);
                 listview_notification.BeginUpdate();
                 foreach (var notification in notifications)
                 {
