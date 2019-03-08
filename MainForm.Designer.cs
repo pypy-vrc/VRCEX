@@ -78,6 +78,7 @@
             this.listview_search_users = new System.Windows.Forms.ListView();
             this.textbox_search_keyword = new System.Windows.Forms.TextBox();
             this.tabpage_avatar = new System.Windows.Forms.TabPage();
+            this.button_avatar_assign = new System.Windows.Forms.Button();
             this.button_avatar_unfavorite = new System.Windows.Forms.Button();
             this.button_avatar_favorite = new System.Windows.Forms.Button();
             this.listview_avatars = new System.Windows.Forms.ListView();
@@ -90,6 +91,7 @@
             this.textbox_avatar_id = new System.Windows.Forms.TextBox();
             this.picturebox_avatar = new System.Windows.Forms.PictureBox();
             this.tabpage_moderation = new System.Windows.Forms.TabPage();
+            this.checkbox_moderation_view_all = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.button_moderation_refresh = new System.Windows.Forms.Button();
             this.listview_moderations_againstme = new System.Windows.Forms.ListView();
@@ -383,7 +385,7 @@
             this.picturebox_world.Size = new System.Drawing.Size(240, 180);
             this.picturebox_world.TabIndex = 0;
             this.picturebox_world.TabStop = false;
-            this.picturebox_world.DoubleClick += new System.EventHandler(this.picturebox_world_DoubleClick);
+            this.picturebox_world.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.picturebox_world_MouseDoubleClick);
             // 
             // tabpage_user
             // 
@@ -545,7 +547,7 @@
             this.picturebox_user.Size = new System.Drawing.Size(240, 180);
             this.picturebox_user.TabIndex = 1;
             this.picturebox_user.TabStop = false;
-            this.picturebox_user.DoubleClick += new System.EventHandler(this.picturebox_user_DoubleClick);
+            this.picturebox_user.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.picturebox_user_MouseDoubleClick);
             // 
             // tabpage_search
             // 
@@ -655,6 +657,7 @@
             // 
             // tabpage_avatar
             // 
+            this.tabpage_avatar.Controls.Add(this.button_avatar_assign);
             this.tabpage_avatar.Controls.Add(this.button_avatar_unfavorite);
             this.tabpage_avatar.Controls.Add(this.button_avatar_favorite);
             this.tabpage_avatar.Controls.Add(this.listview_avatars);
@@ -673,6 +676,16 @@
             this.tabpage_avatar.TabIndex = 2;
             this.tabpage_avatar.Text = "Avatar";
             this.tabpage_avatar.UseVisualStyleBackColor = true;
+            // 
+            // button_avatar_assign
+            // 
+            this.button_avatar_assign.Location = new System.Drawing.Point(168, 415);
+            this.button_avatar_assign.Name = "button_avatar_assign";
+            this.button_avatar_assign.Size = new System.Drawing.Size(75, 23);
+            this.button_avatar_assign.TabIndex = 7;
+            this.button_avatar_assign.Text = "Assign";
+            this.button_avatar_assign.UseVisualStyleBackColor = true;
+            this.button_avatar_assign.Click += new System.EventHandler(this.button_avatar_assign_Click);
             // 
             // button_avatar_unfavorite
             // 
@@ -790,10 +803,11 @@
             this.picturebox_avatar.Size = new System.Drawing.Size(240, 180);
             this.picturebox_avatar.TabIndex = 7;
             this.picturebox_avatar.TabStop = false;
-            this.picturebox_avatar.DoubleClick += new System.EventHandler(this.picturebox_avatar_DoubleClick);
+            this.picturebox_avatar.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.picturebox_avatar_MouseDoubleClick);
             // 
             // tabpage_moderation
             // 
+            this.tabpage_moderation.Controls.Add(this.checkbox_moderation_view_all);
             this.tabpage_moderation.Controls.Add(this.label3);
             this.tabpage_moderation.Controls.Add(this.button_moderation_refresh);
             this.tabpage_moderation.Controls.Add(this.listview_moderations_againstme);
@@ -805,6 +819,17 @@
             this.tabpage_moderation.TabIndex = 4;
             this.tabpage_moderation.Text = "Moderation";
             this.tabpage_moderation.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_moderation_view_all
+            // 
+            this.checkbox_moderation_view_all.AutoSize = true;
+            this.checkbox_moderation_view_all.Location = new System.Drawing.Point(3, 422);
+            this.checkbox_moderation_view_all.Name = "checkbox_moderation_view_all";
+            this.checkbox_moderation_view_all.Size = new System.Drawing.Size(70, 16);
+            this.checkbox_moderation_view_all.TabIndex = 4;
+            this.checkbox_moderation_view_all.Text = "View All";
+            this.checkbox_moderation_view_all.UseVisualStyleBackColor = true;
+            this.checkbox_moderation_view_all.CheckedChanged += new System.EventHandler(this.checkbox_moderation_view_all_CheckedChanged);
             // 
             // label3
             // 
@@ -1221,6 +1246,7 @@
             this.tabpage_avatar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picturebox_avatar)).EndInit();
             this.tabpage_moderation.ResumeLayout(false);
+            this.tabpage_moderation.PerformLayout();
             this.tabpage_notification.ResumeLayout(false);
             this.tabpage_about.ResumeLayout(false);
             this.tabpage_about.PerformLayout();
@@ -1333,6 +1359,8 @@
         private System.Windows.Forms.Button button_friends_list;
         public System.Windows.Forms.ImageList imagelist_listbox;
         private System.Windows.Forms.ImageList imagelist_picturebox;
+        private System.Windows.Forms.Button button_avatar_assign;
+        private System.Windows.Forms.CheckBox checkbox_moderation_view_all;
     }
 }
 

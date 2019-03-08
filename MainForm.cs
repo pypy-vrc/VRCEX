@@ -39,7 +39,10 @@ namespace VRCEX
         {
             public int Compare(object x, object y)
             {
-                return ((ListViewItem)x).Index - ((ListViewItem)y).Index;
+                var a = (ListViewItem)x;
+                var b = (ListViewItem)y;
+                return string.Compare(a.Text, b.Text, StringComparison.OrdinalIgnoreCase);
+                // return ((ListViewItem)x).Index - ((ListViewItem)y).Index;
             }
         }
 
@@ -49,13 +52,13 @@ namespace VRCEX
             {
                 var a = (ListViewItem)x;
                 var b = (ListViewItem)y;
-                var c = string.Compare(b.SubItems[2].Text, a.SubItems[2].Text);
+                var c = string.Compare(b.SubItems[2].Text, a.SubItems[2].Text, StringComparison.OrdinalIgnoreCase);
                 if (c == 0)
                 {
-                    c = string.Compare(a.SubItems[1].Text, b.SubItems[1].Text); 
+                    c = string.Compare(a.SubItems[1].Text, b.SubItems[1].Text, StringComparison.OrdinalIgnoreCase); 
                     if (c == 0)
                     {
-                        c = string.Compare(a.Text, b.Text);
+                        c = string.Compare(a.Text, b.Text, StringComparison.OrdinalIgnoreCase);
                     }
                 }
                 return c;
@@ -164,8 +167,13 @@ namespace VRCEX
             item.Enabled = !string.IsNullOrEmpty(unityPackageUrl);
         }
 
-        private void FetchImage(string imageUrl, ImageList imageList, PictureBox pictureBox = null)
+        private void FetchImage(string imageUrl, ImageList imageList, PictureBox pictureBox = null, string imageExUrl = null)
         {
+            var tags = imageUrl;
+            if (!string.IsNullOrEmpty(imageExUrl))
+            {
+                tags += '\0' + imageExUrl;
+            }
             var images = imageList.Images;
             if (!images.ContainsKey(imageUrl))
             {
@@ -187,7 +195,7 @@ namespace VRCEX
                                         images.Add(imageUrl, image);
                                         if (pictureBox != null)
                                         {
-                                            pictureBox.Tag = imageUrl;
+                                            pictureBox.Tag = tags;
                                             pictureBox.Image = images[imageUrl];
                                         }
                                     }));
@@ -202,7 +210,7 @@ namespace VRCEX
             }
             else if (pictureBox != null)
             {
-                pictureBox.Tag = imageUrl;
+                pictureBox.Tag = tags;
                 pictureBox.Image = images[imageUrl];
             }
         }
@@ -637,7 +645,7 @@ namespace VRCEX
             else if (textbox_user_id.Text.Equals(user.id))
             {
                 ApiUser.CheckFriendStatus(user.id);
-                FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_picturebox, picturebox_user);
+                FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_picturebox, picturebox_user, user.currentAvatarImageUrl);
                 textbox_user_id.Text = user.id;
                 textbox_user_name.Text = $"{user.displayName} ({user.username})";
                 textbox_user_level.Text = user.GetTrustLevel().ToString();
@@ -683,7 +691,7 @@ namespace VRCEX
                 }
                 foreach (var user in users)
                 {
-                    FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_listbox);
+                    FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_listbox, null, user.currentAvatarImageUrl);
                     var item = new ListViewItem
                     {
                         Tag = user,
@@ -748,7 +756,7 @@ namespace VRCEX
                     var is_offline = "offline".Equals(user.location, StringComparison.OrdinalIgnoreCase);
                     if (!is_offline)
                     {
-                        FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_listbox);
+                        FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_listbox, null, user.currentAvatarImageUrl);
                     }
                     var group = is_offline ? listview_offline_friends : listview_online_friends;
                     if (m_Friends.TryGetValue(user.id, out ListViewItem item))
@@ -761,7 +769,7 @@ namespace VRCEX
                         if (!group.Equals(item.ListView))
                         {
                             item.Remove();
-                            group.Items.Insert(0, item);
+                            group.Items.Add(item);
                         }
                     }
                     else
@@ -823,6 +831,8 @@ namespace VRCEX
                         item.Font = new Font(item.ListView.Font, FontStyle.Strikeout);
                     }
                 }
+                listview_offline_friends.Sort();
+                listview_online_friends.Sort();
                 listview_offline_friends.EndUpdate();
                 listview_online_friends.EndUpdate();
                 tabpage_online.Text = $"Online({listview_online_friends.Items.Count})";
@@ -959,7 +969,7 @@ namespace VRCEX
                 {
                     ApiFile.ParseAndFetch(world.assetUrl, world);
                     UpdateDownloadMenu(picturebox_world, world.assetUrl, world.unityPackageUrl);
-                    FetchImage(world.thumbnailImageUrl, imagelist_picturebox, picturebox_world);
+                    FetchImage(world.thumbnailImageUrl, imagelist_picturebox, picturebox_world, world.imageUrl);
                     textbox_world_name.Text = world.name;
                     textbox_world_author.Tag = world.authorId;
                     textbox_world_author.Text = $"{world.authorName}, {world.releaseStatus}, {world.occupants}/{world.capacity}";
@@ -998,7 +1008,7 @@ namespace VRCEX
                 listview_search_worlds.Items.Clear();
                 foreach (var world in worlds)
                 {
-                    FetchImage(world.thumbnailImageUrl, imagelist_listbox);
+                    FetchImage(world.thumbnailImageUrl, imagelist_listbox, null, world.imageUrl);
                     var item = new ListViewItem
                     {
                         Tag = world,
@@ -1037,7 +1047,7 @@ namespace VRCEX
                     listview_world_instance_users.Items.Clear();
                     foreach (var user in instance.users)
                     {
-                        FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_listbox);
+                        FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_listbox, null, user.currentAvatarImageUrl);
                         var item = new ListViewItem
                         {
                             Tag = user,
@@ -1088,7 +1098,7 @@ namespace VRCEX
             {
                 ApiFile.ParseAndFetch(avatar.assetUrl, avatar);
                 UpdateDownloadMenu(picturebox_avatar, avatar.assetUrl, avatar.unityPackageUrl);
-                FetchImage(avatar.thumbnailImageUrl, imagelist_picturebox, picturebox_avatar);
+                FetchImage(avatar.thumbnailImageUrl, imagelist_picturebox, picturebox_avatar, avatar.imageUrl);
                 textbox_avatar_id.Text = avatar.id;
                 textbox_avatar_name.Text = avatar.name;
                 textbox_avatar_author.Tag = avatar.authorId;
@@ -1112,7 +1122,7 @@ namespace VRCEX
                 listview_avatars.BeginUpdate();
                 foreach (var avatar in avatars)
                 {
-                    FetchImage(avatar.thumbnailImageUrl, imagelist_listbox);
+                    FetchImage(avatar.thumbnailImageUrl, imagelist_listbox, null, avatar.imageUrl);
                     listview_avatars.Items.Add(new ListViewItem
                     {
                         Tag = avatar,
@@ -1214,12 +1224,17 @@ namespace VRCEX
                 listview_moderations.BeginUpdate();
                 foreach (var moderation in moderations)
                 {
-                    if ("block".Equals(moderation.type, StringComparison.OrdinalIgnoreCase) ||
+                    var moderated = ("block".Equals(moderation.type, StringComparison.OrdinalIgnoreCase) ||
                         "mute".Equals(moderation.type, StringComparison.OrdinalIgnoreCase) ||
-                        "hideAvatar".Equals(moderation.type, StringComparison.OrdinalIgnoreCase))
+                        "hideAvatar".Equals(moderation.type, StringComparison.OrdinalIgnoreCase));
+                    if (moderated ||
+                        checkbox_moderation_view_all.Checked)
                     {
-                        m_ModerationCheck.Add(moderation.targetUserId);
-                        m_ModerationCheck.Add($"{moderation.targetUserId}_{moderation.type.ToLower()}");
+                        if (moderated)
+                        {
+                            m_ModerationCheck.Add(moderation.targetUserId);
+                            m_ModerationCheck.Add($"{moderation.targetUserId}_{moderation.type.ToLower()}");
+                        }
                         var item = new ListViewItem
                         {
                             Tag = moderation,
@@ -1269,11 +1284,16 @@ namespace VRCEX
                 listview_moderations_againstme.Items.Clear();
                 foreach (var moderation in moderations)
                 {
-                    if ("block".Equals(moderation.type, StringComparison.OrdinalIgnoreCase) ||
+                    var moderated = ("block".Equals(moderation.type, StringComparison.OrdinalIgnoreCase) ||
                         "mute".Equals(moderation.type, StringComparison.OrdinalIgnoreCase) ||
-                        "hideAvatar".Equals(moderation.type, StringComparison.OrdinalIgnoreCase))
+                        "hideAvatar".Equals(moderation.type, StringComparison.OrdinalIgnoreCase));
+                    if (moderated ||
+                        checkbox_moderation_view_all.Checked)
                     {
-                        m_ModerationCheck.Add(moderation.sourceUserId);
+                        if (moderated)
+                        {
+                            m_ModerationCheck.Add(moderation.sourceUserId);
+                        }
                         var item = new ListViewItem
                         {
                             Tag = moderation,
@@ -1491,12 +1511,13 @@ namespace VRCEX
         // World
         //
 
-        private void picturebox_world_DoubleClick(object sender, EventArgs e)
+        private void picturebox_world_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (picturebox_world.Tag is string url &&
                 !string.IsNullOrEmpty(url))
             {
-                Process.Start(url);
+                var a = url.Split(new char[] { '\0' });
+                Process.Start(a[e.Button != MouseButtons.Left ? a.Length - 1 : 0]);
             }
         }
 
@@ -1620,12 +1641,13 @@ namespace VRCEX
         // User
         //
 
-        private void picturebox_user_DoubleClick(object sender, EventArgs e)
+        private void picturebox_user_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (picturebox_user.Tag is string url &&
                 !string.IsNullOrEmpty(url))
             {
-                Process.Start(url);
+                var a = url.Split(new char[] { '\0' });
+                Process.Start(a[e.Button != MouseButtons.Left ? a.Length - 1 : 0]);
             }
         }
 
@@ -1860,12 +1882,13 @@ namespace VRCEX
         // Avatar
         //
 
-        private void picturebox_avatar_DoubleClick(object sender, EventArgs e)
+        private void picturebox_avatar_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (picturebox_avatar.Tag is string url &&
                 !string.IsNullOrEmpty(url))
             {
-                Process.Start(url);
+                var a = url.Split(new char[] { '\0' });
+                Process.Start(a[e.Button != MouseButtons.Left ? a.Length - 1 : 0]);
             }
         }
 
@@ -1925,6 +1948,16 @@ namespace VRCEX
             }
         }
 
+        private void button_avatar_assign_Click(object sender, EventArgs e)
+        {
+            var id = textbox_avatar_id.Text;
+            if (!string.IsNullOrEmpty(id))
+            {
+                m_NextFetchFavorite = DateTime.MinValue;
+                ApiAvatar.AssignToThisUser(id);
+            }
+        }
+
         private void button_avatar_favorite_avatars_Click(object sender, EventArgs e)
         {
             listview_avatars.Items.Clear();
@@ -1974,6 +2007,11 @@ namespace VRCEX
                 tabcontrol_main.SelectedTab = tabpage_user;
                 tabpage_user.Focus();
             }
+        }
+
+        private void checkbox_moderation_view_all_CheckedChanged(object sender, EventArgs e)
+        {
+            m_NextFetchModeration = DateTime.MinValue;
         }
 
         private void button_moderation_refresh_Click(object sender, EventArgs e)
