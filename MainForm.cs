@@ -39,15 +39,12 @@ namespace VRCEX
         {
             public int Compare(object x, object y)
             {
-                var a = (ListViewItem)x;
-                var b = (ListViewItem)y;
-                var aa = a.Tag as ApiUser;
-                var bb = b.Tag as ApiUser;
-                // return string.Compare((aa != null) ? aa.last_login : string.Empty, (bb != null) ? bb.last_login : string.Empty, StringComparison.OrdinalIgnoreCase);
-                if (aa != null || bb != null)
+                var a = ((ListViewItem)x).Tag as ApiUser;
+                var b = ((ListViewItem)y).Tag as ApiUser;
+                if (a != null && b != null)
                 {
-                    if (bb == null || aa.Index > bb.Index) return 1;
-                    if (aa == null || aa.Index < bb.Index) return -1;
+                    if (a.Index > b.Index) return 1;
+                    if (a.Index < b.Index) return -1;
                 }
                 return 0;
             }
