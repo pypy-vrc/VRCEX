@@ -111,6 +111,14 @@
             this.listview_notification_type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.listview_notification_created_at = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabpage_about = new System.Windows.Forms.TabPage();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.label_offline_sort = new System.Windows.Forms.Label();
+            this.radiobutton_offline_name = new System.Windows.Forms.RadioButton();
+            this.radiobutton_offline_default = new System.Windows.Forms.RadioButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label_online_sort = new System.Windows.Forms.Label();
+            this.radiobutton_online_name = new System.Windows.Forms.RadioButton();
+            this.radiobutton_online_default = new System.Windows.Forms.RadioButton();
             this.button_friends_list = new System.Windows.Forms.Button();
             this.groupbox_status = new System.Windows.Forms.GroupBox();
             this.button_update_status = new System.Windows.Forms.Button();
@@ -142,6 +150,8 @@
             this.tabpage_moderation.SuspendLayout();
             this.tabpage_notification.SuspendLayout();
             this.tabpage_about.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.groupbox_status.SuspendLayout();
             this.tabcontrol_friends.SuspendLayout();
             this.tabpage_online.SuspendLayout();
@@ -1001,6 +1011,8 @@
             // 
             // tabpage_about
             // 
+            this.tabpage_about.Controls.Add(this.panel2);
+            this.tabpage_about.Controls.Add(this.panel1);
             this.tabpage_about.Controls.Add(this.button_friends_list);
             this.tabpage_about.Controls.Add(this.groupbox_status);
             this.tabpage_about.Controls.Add(this.label2);
@@ -1016,6 +1028,88 @@
             this.tabpage_about.TabIndex = 6;
             this.tabpage_about.Text = "About";
             this.tabpage_about.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label_offline_sort);
+            this.panel2.Controls.Add(this.radiobutton_offline_name);
+            this.panel2.Controls.Add(this.radiobutton_offline_default);
+            this.panel2.Location = new System.Drawing.Point(8, 219);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(300, 20);
+            this.panel2.TabIndex = 8;
+            // 
+            // label_offline_sort
+            // 
+            this.label_offline_sort.AutoSize = true;
+            this.label_offline_sort.Location = new System.Drawing.Point(3, 5);
+            this.label_offline_sort.Name = "label_offline_sort";
+            this.label_offline_sort.Size = new System.Drawing.Size(120, 12);
+            this.label_offline_sort.TabIndex = 2;
+            this.label_offline_sort.Text = "Offline Users Sorting";
+            // 
+            // radiobutton_offline_name
+            // 
+            this.radiobutton_offline_name.AutoSize = true;
+            this.radiobutton_offline_name.Location = new System.Drawing.Point(221, 3);
+            this.radiobutton_offline_name.Name = "radiobutton_offline_name";
+            this.radiobutton_offline_name.Size = new System.Drawing.Size(76, 16);
+            this.radiobutton_offline_name.TabIndex = 1;
+            this.radiobutton_offline_name.Text = "By Name";
+            this.radiobutton_offline_name.UseVisualStyleBackColor = true;
+            this.radiobutton_offline_name.CheckedChanged += new System.EventHandler(this.radiobutton_offline_CheckedChanged);
+            // 
+            // radiobutton_offline_default
+            // 
+            this.radiobutton_offline_default.AutoSize = true;
+            this.radiobutton_offline_default.Location = new System.Drawing.Point(154, 3);
+            this.radiobutton_offline_default.Name = "radiobutton_offline_default";
+            this.radiobutton_offline_default.Size = new System.Drawing.Size(61, 16);
+            this.radiobutton_offline_default.TabIndex = 0;
+            this.radiobutton_offline_default.Text = "Default";
+            this.radiobutton_offline_default.UseVisualStyleBackColor = true;
+            this.radiobutton_offline_default.CheckedChanged += new System.EventHandler(this.radiobutton_offline_CheckedChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label_online_sort);
+            this.panel1.Controls.Add(this.radiobutton_online_name);
+            this.panel1.Controls.Add(this.radiobutton_online_default);
+            this.panel1.Location = new System.Drawing.Point(8, 193);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(300, 20);
+            this.panel1.TabIndex = 8;
+            // 
+            // label_online_sort
+            // 
+            this.label_online_sort.AutoSize = true;
+            this.label_online_sort.Location = new System.Drawing.Point(3, 3);
+            this.label_online_sort.Name = "label_online_sort";
+            this.label_online_sort.Size = new System.Drawing.Size(121, 12);
+            this.label_online_sort.TabIndex = 2;
+            this.label_online_sort.Text = "Online Users Sorting";
+            // 
+            // radiobutton_online_name
+            // 
+            this.radiobutton_online_name.AutoSize = true;
+            this.radiobutton_online_name.Location = new System.Drawing.Point(221, 1);
+            this.radiobutton_online_name.Name = "radiobutton_online_name";
+            this.radiobutton_online_name.Size = new System.Drawing.Size(76, 16);
+            this.radiobutton_online_name.TabIndex = 1;
+            this.radiobutton_online_name.Text = "By Name";
+            this.radiobutton_online_name.UseVisualStyleBackColor = true;
+            this.radiobutton_online_name.CheckedChanged += new System.EventHandler(this.radiobutton_online_CheckedChanged);
+            // 
+            // radiobutton_online_default
+            // 
+            this.radiobutton_online_default.AutoSize = true;
+            this.radiobutton_online_default.Location = new System.Drawing.Point(154, 1);
+            this.radiobutton_online_default.Name = "radiobutton_online_default";
+            this.radiobutton_online_default.Size = new System.Drawing.Size(61, 16);
+            this.radiobutton_online_default.TabIndex = 0;
+            this.radiobutton_online_default.Text = "Default";
+            this.radiobutton_online_default.UseVisualStyleBackColor = true;
+            this.radiobutton_online_default.CheckedChanged += new System.EventHandler(this.radiobutton_online_CheckedChanged);
             // 
             // button_friends_list
             // 
@@ -1250,6 +1344,10 @@
             this.tabpage_notification.ResumeLayout(false);
             this.tabpage_about.ResumeLayout(false);
             this.tabpage_about.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.groupbox_status.ResumeLayout(false);
             this.groupbox_status.PerformLayout();
             this.tabcontrol_friends.ResumeLayout(false);
@@ -1361,6 +1459,14 @@
         private System.Windows.Forms.ImageList imagelist_picturebox;
         private System.Windows.Forms.Button button_avatar_assign;
         private System.Windows.Forms.CheckBox checkbox_moderation_view_all;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label label_offline_sort;
+        private System.Windows.Forms.RadioButton radiobutton_offline_name;
+        private System.Windows.Forms.RadioButton radiobutton_offline_default;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label_online_sort;
+        private System.Windows.Forms.RadioButton radiobutton_online_name;
+        private System.Windows.Forms.RadioButton radiobutton_online_default;
     }
 }
 

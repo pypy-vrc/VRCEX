@@ -35,14 +35,31 @@ namespace VRCEX
         private string[] m_SearchFriendResult = null;
         private int m_SearchFriendIndex = 0;
 
-        private class FriendsListComparer : IComparer
+        private class FriendsListByDefaultComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                var a = (ListViewItem)x;
+                var b = (ListViewItem)y;
+                var aa = a.Tag as ApiUser;
+                var bb = b.Tag as ApiUser;
+                // return string.Compare((aa != null) ? aa.last_login : string.Empty, (bb != null) ? bb.last_login : string.Empty, StringComparison.OrdinalIgnoreCase);
+                if (aa != null || bb != null)
+                {
+                    if (bb == null || aa.Index > bb.Index) return 1;
+                    if (aa == null || aa.Index < bb.Index) return -1;
+                }
+                return 0;
+            }
+        }
+
+        private class FriendsListByNameComparer : IComparer
         {
             public int Compare(object x, object y)
             {
                 var a = (ListViewItem)x;
                 var b = (ListViewItem)y;
                 return string.Compare(a.Text, b.Text, StringComparison.OrdinalIgnoreCase);
-                // return ((ListViewItem)x).Index - ((ListViewItem)y).Index;
             }
         }
 
@@ -74,9 +91,9 @@ namespace VRCEX
             textbox_world_name.Font = new Font(textbox_world_name.Font, FontStyle.Bold);
             textbox_user_name.Font = new Font(textbox_user_name.Font, FontStyle.Bold);
             textbox_avatar_name.Font = new Font(textbox_avatar_name.Font, FontStyle.Bold);
-            listview_online_friends.ListViewItemSorter = new FriendsListComparer();
+            listview_online_friends.ListViewItemSorter = new FriendsListByDefaultComparer();
             listview_online_friends.Sorting = SortOrder.Ascending;
-            listview_offline_friends.ListViewItemSorter = new FriendsListComparer();
+            listview_offline_friends.ListViewItemSorter = new FriendsListByDefaultComparer();
             listview_offline_friends.Sorting = SortOrder.Ascending;
             listview_moderations.ListViewItemSorter = new NotificationListComparer();
             listview_moderations.Sorting = SortOrder.Ascending;
@@ -103,6 +120,22 @@ namespace VRCEX
             combobox_status.Items.Add("busy");
             combobox_status.Items.Add("offline");
             combobox_status.EndUpdate();
+            if ("Name".Equals(LocalConfig.GetString("Sorting:Online"), StringComparison.OrdinalIgnoreCase))
+            {
+                radiobutton_online_name.Checked = true;
+            }
+            else
+            {
+                radiobutton_online_default.Checked = true;
+            }
+            if ("Name".Equals(LocalConfig.GetString("Sorting:Offline"), StringComparison.OrdinalIgnoreCase))
+            {
+                radiobutton_offline_name.Checked = true;
+            }
+            else
+            {
+                radiobutton_offline_default.Checked = true;
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -401,6 +434,31 @@ namespace VRCEX
                     result.Add(user);
                 }
             }
+            result.Sort((a, b) =>
+            {
+                var aa = "private".Equals(a.locationInfo, StringComparison.OrdinalIgnoreCase);
+                var bb = "private".Equals(b.locationInfo, StringComparison.OrdinalIgnoreCase);
+                if (aa ^ bb)
+                {
+                    if (aa)
+                    {
+                        return -1;
+                    }
+                    if (bb)
+                    {
+                        return 1;
+                    }
+                }
+                else
+                {
+                    var c = string.Compare(a.locationInfo, b.locationInfo, StringComparison.OrdinalIgnoreCase);
+                    if (c != 0)
+                    {
+                        return c;
+                    }
+                }
+                return string.Compare(a.displayName, b.displayName, StringComparison.OrdinalIgnoreCase);
+            });
             return result;
         }
 
@@ -2102,6 +2160,7 @@ namespace VRCEX
                 form.Location = new Point(Location.X + (Width - form.Width) / 2, Location.Y + (Height - form.Height) / 2);
                 form.Show();
             }
+            FriendsListForm.Instance.Focus();
         }
 
         private void button_update_status_Click(object sender, EventArgs e)
@@ -2167,6 +2226,48 @@ namespace VRCEX
                 }
                 textbox_search_friend.Focus();
                 e.Handled = m_SearchFriendResult != null && m_SearchFriendResult.Length > 0; // remove ding sound
+            }
+        }
+
+        private void radiobutton_online_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sender is RadioButton radioButton && radioButton.Checked)
+            {
+                listview_online_friends.BeginUpdate();
+                if (radiobutton_online_default.Checked)
+                {
+                    listview_online_friends.ListViewItemSorter = new FriendsListByDefaultComparer();
+                    listview_online_friends.Sorting = SortOrder.Ascending;
+                    LocalConfig.Remove("Sorting:Online");
+                }
+                if (radiobutton_online_name.Checked)
+                {
+                    listview_online_friends.ListViewItemSorter = new FriendsListByNameComparer();
+                    listview_online_friends.Sorting = SortOrder.Ascending;
+                    LocalConfig.SetString("Sorting:Online", "Name");
+                }
+                listview_online_friends.EndUpdate();
+            }
+        }
+
+        private void radiobutton_offline_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sender is RadioButton radioButton && radioButton.Checked)
+            {
+                listview_offline_friends.BeginUpdate();
+                if (radiobutton_offline_default.Checked)
+                {
+                    listview_offline_friends.ListViewItemSorter = new FriendsListByDefaultComparer();
+                    listview_offline_friends.Sorting = SortOrder.Ascending;
+                    LocalConfig.Remove("Sorting:Offline");
+                }
+                if (radiobutton_offline_name.Checked)
+                {
+                    listview_offline_friends.ListViewItemSorter = new FriendsListByNameComparer();
+                    listview_offline_friends.Sorting = SortOrder.Ascending;
+                    LocalConfig.SetString("Sorting:Offline", "Name");
+                }
+                listview_offline_friends.EndUpdate();
             }
         }
     }

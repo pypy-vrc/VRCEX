@@ -241,6 +241,10 @@ namespace VRCEX
 
     public class ApiUser
     {
+        // for list sorting
+        private static long Counter = 0;
+        public long Index = ++Counter;
+
         public enum TrustLevel
         {
             None,
