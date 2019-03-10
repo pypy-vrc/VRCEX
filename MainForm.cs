@@ -818,6 +818,7 @@ namespace VRCEX
                     {
                         if (item.Tag is ApiUser _user)
                         {
+                            user.Index = _user.Index;
                             user.pastLocation = _user.location;
                             user.pastLocationInfo = _user.locationInfo;
                         }
