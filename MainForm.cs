@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2011,6 +2012,7 @@ namespace VRCEX
             {
                 m_NextFetchFavorite = DateTime.MinValue;
                 ApiAvatar.AssignToThisUser(id);
+                ShowMessage($"AssignAvatar : {id}");
             }
         }
 
@@ -2089,6 +2091,21 @@ namespace VRCEX
                 {
                     MessageBox.Show(notification.message);
                 }
+                else if ("invite".Equals(notification.type, StringComparison.OrdinalIgnoreCase))
+                {
+                    var info = JsonConvert.DeserializeAnonymousType(notification.details, new { worldId = string.Empty, worldName = string.Empty });
+                    var L = LocationInfo.Parse(info.worldId);
+                    if (L != null)
+                    {
+                        textbox_world_location.Text = info.worldId;
+                        ApiWorld.Fetch(L.WorldId);
+                        ApiWorldInstance.Fetch(L.WorldId, L.InstanceId);
+                        tabcontrol_main.SelectedTab = tabpage_world;
+                        tabpage_world.Focus();
+                    }
+                    textbox_user_id.Text = notification.senderUserId;
+                    ApiUser.Fetch(notification.senderUserId);
+                }
             }
         }
 
@@ -2119,7 +2136,10 @@ namespace VRCEX
             if (listview_notification.SelectedItems.Count > 0 &&
                 listview_notification.SelectedItems[0].Tag is ApiNotification notification)
             {
-                ApiUser.AcceptFriendRequest(notification.id);
+                if ("friendRequest".Equals(notification.type, StringComparison.OrdinalIgnoreCase))
+                {
+                    ApiUser.AcceptFriendRequest(notification.id);
+                }
             }
         }
 

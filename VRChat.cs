@@ -44,7 +44,7 @@ namespace VRCEX
 
     public static class VRCApi
     {
-        private static readonly string API_URL = "https://vrchat.net/api/1/";
+        private static readonly string API_URL = "https://api.vrchat.cloud/api/1/";
         private static readonly string COOKIE_FILE_NAME = "cookie.dat";
         private static string m_ApiKey = string.Empty;
         private static CookieContainer m_CookieContainer = new CookieContainer();
@@ -123,6 +123,7 @@ namespace VRCEX
                 request.CookieContainer = m_CookieContainer;
                 request.KeepAlive = true;
                 request.Method = method.ToString();
+                request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36";
                 if (setup != null)
                 {
                     setup.Invoke(request);
