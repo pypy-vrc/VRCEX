@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Jil;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -38,9 +38,15 @@ namespace VRCEX
     // 138.197.0.101, 138.197.1.206, 138.197.99.115
     // 159.89.32.95, 159.203.172.3, 159.203.173.149
 
+    // 2019-04-17
+    // https://pipeline.vrchat.cloud
+    // 138.197.0.101, 138.197.1.206, 138.197.99.115
+    // 159.89.32.95, 159.203.163.197, 159.203.172.3, 159.203.173.149, 159.65.169.82
+
     // To change display name:
     // https://vrchat.net/api/1/auth/exists?apiKey=JlE5Jldo5Jibnk5O5hTx6XVqsJu4WJ26&username=&displayName=dildo
-    // $.ajax({ url: window.endpoint + '/api/1/users/usr_75efc1e5-700f-447b-9beb-11acd9c3f2a9', type: 'PUT', data: {displayName: 'SmartHE'}, succcess: console.log, error: console.log });
+    // $.ajax({ url: window.endpoint + '/api/1/users/usr_75efc1e5-700f-447b-9beb-11acd9c3f2a9', type: 'PUT', data: {displayName: 'SmartHE'}, success: console.log, error: console.log });
+    // $.ajax({ url: window.endpoint + '/api/1/user/usr_4f76a584-9d4b-46f6-8209-8305eb683661/message', type: 'POST', data: {type: 'message', message: 'test'}, success: console.log, error: console.log });
 
     public static class VRCApi
     {
@@ -78,10 +84,7 @@ namespace VRCEX
             {
                 using (var reader = new StreamReader(stream))
                 {
-                    using (var jsonReader = new JsonTextReader(reader))
-                    {
-                        callback.Invoke(new JsonSerializer().Deserialize<T>(jsonReader));
-                    }
+                    callback.Invoke(JSON.Deserialize<T>(reader));
                 }
             }
         }
@@ -123,7 +126,7 @@ namespace VRCEX
                 request.CookieContainer = m_CookieContainer;
                 request.KeepAlive = true;
                 request.Method = method.ToString();
-                request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36";
+                request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko";
                 if (setup != null)
                 {
                     setup.Invoke(request);
@@ -136,10 +139,7 @@ namespace VRCEX
                     {
                         using (var writer = new StreamWriter(stream))
                         {
-                            using (var jsonWriter = new JsonTextWriter(writer))
-                            {
-                                new JsonSerializer().Serialize(jsonWriter, data);
-                            }
+                            JSON.SerializeDynamic(data, writer);
                         }
                     }
                 }
@@ -279,6 +279,7 @@ namespace VRCEX
         public string statusDescription;
         public List<string> friendGroupNames;
         public string last_login;
+        public bool isFriend;
 
         // VRCEX variable
         public string locationInfo = string.Empty;
@@ -473,7 +474,7 @@ namespace VRCEX
         private static readonly Color TrustedColor = Color.FromArgb(255, 123, 66);
         private static readonly Color VeteranColor = Color.FromArgb(129, 67, 230);
         private static readonly Color LegendColor = Color.FromArgb(255, 215, 0); // (255, 255, 0)
-        private static readonly Color VIPColor = Color.FromArgb(181, 38, 38);
+        private static readonly Color VIPColor = Color.FromArgb(255, 0, 0); // Color.FromArgb(181, 38, 38);
         private static readonly Color TrollColor = Color.FromArgb(120, 47, 47);
 
         public Color GetColor()
@@ -495,6 +496,20 @@ namespace VRCEX
             }
             return UntrustedColor;
         }
+
+        public static void SendMessage(string userId, string message)
+        {
+            if (!string.IsNullOrEmpty(userId) &&
+                !string.IsNullOrEmpty(message))
+            {
+                // ApiNotification이긴한데 오류가 나길래 귀찮아서 걍 함
+                VRCApi.Request<ApiResponse>((response) => MainForm.Instance.OnSendMessage(userId, response), $"user/{userId}/message", ApiMethod.POST, new Dictionary<string, object>
+                {
+                    ["type"] = "message",
+                    ["message"] = message
+                });
+            }
+        }
     }
 
     //
@@ -515,7 +530,9 @@ namespace VRCEX
         public string assetUrl;
         public string description;
         public string unityPackageUrl;
-        public List<List<string>> instances;
+        public List<List<object>> instances;
+        public int favorites;
+        public int visits;
 
         public static void Fetch(string id)
         {

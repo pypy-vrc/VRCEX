@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Jil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -70,7 +70,7 @@ namespace VRCEX
                 var c = string.Compare(b.SubItems[2].Text, a.SubItems[2].Text, StringComparison.OrdinalIgnoreCase);
                 if (c == 0)
                 {
-                    c = string.Compare(a.SubItems[1].Text, b.SubItems[1].Text, StringComparison.OrdinalIgnoreCase); 
+                    c = string.Compare(a.SubItems[1].Text, b.SubItems[1].Text, StringComparison.OrdinalIgnoreCase);
                     if (c == 0)
                     {
                         c = string.Compare(a.Text, b.Text, StringComparison.OrdinalIgnoreCase);
@@ -520,7 +520,7 @@ namespace VRCEX
                 listview_notification.Items.Clear();
                 if (user == null)
                 {
-                    ApiUser.FetchCurrentUser(); 
+                    ApiUser.FetchCurrentUser();
                 }
                 else
                 {
@@ -700,14 +700,17 @@ namespace VRCEX
             }
             else if (textbox_user_id.Text.Equals(user.id))
             {
-                ApiUser.CheckFriendStatus(user.id);
+                if (!user.isFriend)
+                {
+                    ApiUser.CheckFriendStatus(user.id);
+                }
                 FetchImage(user.currentAvatarThumbnailImageUrl, imagelist_picturebox, picturebox_user, user.currentAvatarImageUrl);
                 textbox_user_id.Text = user.id;
                 textbox_user_name.Text = $"{user.displayName} ({user.username})";
                 textbox_user_level.Text = user.GetTrustLevel().ToString();
                 textbox_user_info.Text = DateTime.TryParse(user.last_login, out DateTime last_login) ? last_login.ToString("yyyy-MM-dd HH:mm:ss") : user.last_login;
                 textbox_user_status.Text = $"[{user.status}] {user.statusDescription}";
-                button_user_friend.Text = "Loading";
+                button_user_friend.Text = user.isFriend ? "Unfriend" : "Loading";
                 button_user_mute.Text = m_ModerationCheck.Contains($"{user.id}_mute") ? "Unmute" : "Mute";
                 button_user_block.Text = m_ModerationCheck.Contains($"{user.id}_block") ? "Unblock" : "Block";
                 button_user_hide.Text = m_ModerationCheck.Contains($"{user.id}_hideavatar") ? "ShowAvatar" : "HideAvatar";
@@ -980,6 +983,21 @@ namespace VRCEX
             }
         }
 
+        public void OnSendMessage(string userId, ApiResponse response)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new MethodInvoker(() =>
+                {
+                    OnSendMessage(userId, response);
+                }));
+            }
+            else
+            {
+                ShowMessage("Message sent");
+            }
+        }
+
         //
         // ApiWorld
         //
@@ -1036,13 +1054,14 @@ namespace VRCEX
                     listview_world_instances.Items.Clear();
                     foreach (var data in world.instances)
                     {
-                        var location = $"{L2.WorldId}:{data[0]}";
+                        var iid = data[0].ToString().Replace("\"", string.Empty);
+                        var location = $"{L2.WorldId}:{iid}";
                         var L3 = LocationInfo.Parse(location);
                         listview_world_instances.Items.Add(new ListViewItem
                         {
                             Tag = location,
-                            Text = (L3 != null) ? $"{L3.InstanceInfo} ({data[1]})" : $"{data[0]} ({data[1]})",
-                            ToolTipText = data[0]
+                            Text = (L3 != null) ? $"{L3.InstanceInfo} ({data[1]})" : $"{iid} ({data[1]})",
+                            ToolTipText = iid
                         });
                     }
                     listview_world_instances.EndUpdate();
@@ -1843,7 +1862,27 @@ namespace VRCEX
                 ApiFavorite.RemoveFavorite(id);
             }
         }
-        
+
+        private void button_user_message_Click(object sender, EventArgs e)
+        {
+            if (m_CurrentUser != null)
+            {
+                var id = textbox_user_id.Text;
+                if (!string.IsNullOrEmpty(id))
+                {
+                    if (m_CurrentUser.id == id ||
+                        m_Friends.ContainsKey(id))
+                    {
+                        new MessageForm().Run(id, textbox_user_name.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("You can only send messages to your friends.", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+        }
+
         private void button_user_authored_worlds_Click(object sender, EventArgs e)
         {
             var id = textbox_user_id.Text;
@@ -2093,7 +2132,7 @@ namespace VRCEX
                 }
                 else if ("invite".Equals(notification.type, StringComparison.OrdinalIgnoreCase))
                 {
-                    var info = JsonConvert.DeserializeAnonymousType(notification.details, new { worldId = string.Empty, worldName = string.Empty });
+                    var info = JSON.DeserializeDynamic(notification.details);
                     var L = LocationInfo.Parse(info.worldId);
                     if (L != null)
                     {

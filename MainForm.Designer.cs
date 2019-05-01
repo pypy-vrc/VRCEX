@@ -53,6 +53,7 @@
             this.textbox_world_location = new System.Windows.Forms.TextBox();
             this.picturebox_world = new System.Windows.Forms.PictureBox();
             this.tabpage_user = new System.Windows.Forms.TabPage();
+            this.button_user_message = new System.Windows.Forms.Button();
             this.textbox_user_status = new System.Windows.Forms.TextBox();
             this.button_user_unfavorite = new System.Windows.Forms.Button();
             this.button_user_hide = new System.Windows.Forms.Button();
@@ -399,6 +400,7 @@
             // 
             // tabpage_user
             // 
+            this.tabpage_user.Controls.Add(this.button_user_message);
             this.tabpage_user.Controls.Add(this.textbox_user_status);
             this.tabpage_user.Controls.Add(this.button_user_unfavorite);
             this.tabpage_user.Controls.Add(this.button_user_hide);
@@ -420,6 +422,16 @@
             this.tabpage_user.TabIndex = 1;
             this.tabpage_user.Text = "User";
             this.tabpage_user.UseVisualStyleBackColor = true;
+            // 
+            // button_user_message
+            // 
+            this.button_user_message.Location = new System.Drawing.Point(168, 415);
+            this.button_user_message.Name = "button_user_message";
+            this.button_user_message.Size = new System.Drawing.Size(75, 23);
+            this.button_user_message.TabIndex = 13;
+            this.button_user_message.Text = "Message";
+            this.button_user_message.UseVisualStyleBackColor = true;
+            this.button_user_message.Click += new System.EventHandler(this.button_user_message_Click);
             // 
             // textbox_user_status
             // 
@@ -1467,6 +1479,7 @@
         private System.Windows.Forms.Label label_online_sort;
         private System.Windows.Forms.RadioButton radiobutton_online_name;
         private System.Windows.Forms.RadioButton radiobutton_online_default;
+        private System.Windows.Forms.Button button_user_message;
     }
 }
 
