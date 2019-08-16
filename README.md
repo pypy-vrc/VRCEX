@@ -1,3 +1,7 @@
+# DEPRECATED
+
+This repository is moved to [pypy-vrc/VRCX](https://github.com/pypy-vrc/VRCX).
+
 VRCEX
 =
 ![0](https://user-images.githubusercontent.com/25771678/53702922-73580e80-3e4f-11e9-9f20-d177cfe2c208.png)
